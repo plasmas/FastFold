@@ -127,6 +127,10 @@ else:
         cuda_ext_helper('fastfold_softmax_cuda', ['softmax_cuda.cpp', 'softmax_cuda_kernel.cu'],
                         extra_cuda_flags + cc_flag))
 
+    ext_modules.append(
+        cuda_ext_helper('fastfold_fused_dense_cuda', ['fused_dense.cpp', 'fused_dense_cuda.cu'],
+                        extra_cuda_flags + cc_flag))
+
 setup(
     name='fastfold',
     version='0.1.0-beta',
