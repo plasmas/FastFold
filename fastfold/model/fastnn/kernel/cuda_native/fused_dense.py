@@ -39,7 +39,6 @@ class DenseNoBiasFunc(torch.autograd.Function):
 class FusedDenseReluDenseFunc(torch.autograd.Function):
     @staticmethod
     def forward(ctx, input, weight1, bias1, weight2, bias2):
-        ctx.save_for_backward(input, weight1, weight2)
         output1, output2, relu_in = fused_dense_cuda.linear_relu_linear_forward(input, weight1, bias1, weight2, bias2)
         ctx.save_for_backward(input, weight1, weight2, relu_in, output1)
         return output2
@@ -86,4 +85,5 @@ class FusedDenseReluDense(nn.Module):
         self.bias2 = nn.Parameter(torch.Tensor(out_features))
 
     def forward(self, input):
-        return fused_dense_relu_dense_function(input, self.weight1, self.bias1, self.weight2, self.bias2)
+        input_shape = input.shape
+        return fused_dense_relu_dense_function(input.reshape(-1, input.shape[-1]), self.weight1, self.bias1, self.weight2, self.bias2).reshape(*input_shape)

@@ -37,10 +37,8 @@ def main():
 
     init_dap(args.dap_size)
 
-    precision = torch.bfloat16
-    if args.dap_size > 1:
-        # (PyTorch issue) Currently All2All communication does not support the Bfloat16 datatype in PyTorch
-        precision = torch.float16
+    # (PyTorch issue) Currently All2All communication does not support the Bfloat16 datatype in PyTorch
+    precision = torch.float32
 
     if not torch.cuda.is_available():
         raise NotImplementedError('Running on CPU is not supported')

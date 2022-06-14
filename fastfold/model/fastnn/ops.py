@@ -7,7 +7,7 @@ from fastfold.model.fastnn.kernel import LayerNorm
 
 from .initializer import glorot_uniform_af
 
-from fastfold.model.fastnn.kernel import bias_sigmod_ele
+from fastfold.model.fastnn.kernel import bias_sigmod_ele, FusedDenseReluDense
 from fastfold.distributed import gather, scatter
 from fastfold.distributed.comm_async import gather_async, gather_async_opp
 
@@ -42,12 +42,11 @@ class Transition(nn.Module):
     def __init__(self, d, n=4):
         super(Transition, self).__init__()
         self.norm = LayerNorm(d)
-        self.linear1 = Linear(d, n * d, initializer='relu')
-        self.linear2 = Linear(n * d, d, initializer='zeros')
+        self.fused_linear = FusedDenseReluDense(d, n*d, d)
 
     def forward(self, src):
         x = self.norm(src)
-        x = self.linear2(F.relu(self.linear1(x)))
+        x = self.fused_linear(x)
         return src + x
 
 
