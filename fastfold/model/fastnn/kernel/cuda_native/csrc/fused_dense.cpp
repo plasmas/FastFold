@@ -1,3 +1,7 @@
+/* This code is from NVIDIA apex:
+       https://github.com/NVIDIA/apex
+   with some changes. */
+
 #include <torch/extension.h>
 #include <torch/torch.h>
 #include <vector>
